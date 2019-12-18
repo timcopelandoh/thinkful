@@ -1,4 +1,6 @@
 .DS_Store
 textdata/
 .ipynb_checkpoints/
+*.csv
+*.xlsx
 
