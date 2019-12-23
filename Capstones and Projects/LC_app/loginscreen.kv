@@ -1,0 +1,19 @@
+#:kivy 1.0.9
+
+<LoginScreen>
+	f_username: username
+	f_password: password
+	GridLayout:
+		rows: 2
+		cols: 2
+		padding: 20
+		spacing: 10
+		Label:
+			text: 'User Name:'
+		TextInput:
+			id: username
+		Label:
+			text: 'Password:'
+		TextInput:
+			id: password
+			password: True
