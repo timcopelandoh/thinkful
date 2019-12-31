@@ -1,7 +1,7 @@
 import pandas as pd
 import statsmodels.api as sm
 
-
+gui=False
 # import data: 'live.csv' is a csv with 5 lines of data for testing
 live = pd.read_csv('live.csv')
 
@@ -25,6 +25,10 @@ disp = disp.sort_values(by = ['grade', 'predict_str'], ascending = [1,0])
 
 from pandasgui import show
 
-if __name__ == '__main__':
-	show(disp)
+
+if gui:
+	if __name__ == '__main__':
+		show(disp)
+else:
+	print(disp)
 
