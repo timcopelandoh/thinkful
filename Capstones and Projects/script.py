@@ -1,0 +1,2 @@
+import model_class
+
