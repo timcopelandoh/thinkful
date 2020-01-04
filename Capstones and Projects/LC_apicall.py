@@ -6,6 +6,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+apikey = 
 
 header = {'Authorization': apikey, 'Content-Type': 'application/json'}
 params = {'showAll': 'True'}
