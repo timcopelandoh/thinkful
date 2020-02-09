@@ -133,7 +133,7 @@ class Ui_Form(object):
         self.max_int.setObjectName("max_int")
         self.max_int.setMinimum(min(disp.int_rate)-1)
         self.max_int.setMaximum(max(disp.int_rate)+1)
-        self.max_int.setValue(max(disp.int_rate))
+        self.max_int.setValue(max(disp.int_rate)+1)
         self.max_int.sliderMoved.connect(self.redraw)
 
         self.retranslateUi(Form)
