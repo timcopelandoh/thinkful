@@ -52,8 +52,18 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1008, 579)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
+        Form.setSizePolicy(sizePolicy)
         self.tableWidget = QtWidgets.QTableWidget(Form)
         self.tableWidget.setGeometry(QtCore.QRect(20, 90, 971, 471))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(7)
 
@@ -109,13 +119,20 @@ class Ui_Form(object):
         loans['EV'] = (loans['predict'] * loans['total_int_paid'] - .37 * (1 - loans['predict'])) * 100
         loans['EV_str'] = loans['EV'].apply(lambda x: str(round(x, 1)) + '%')
 
+        loans['intRate_str'] = loans['intRate'].apply(lambda x: str(x) + '%')
+
         global display_raw
-        display_raw = loans[loans.term == 36][['id', 'loanAmount', 'term', 'intRate', 'grade', 'predict_str', 'EV', 'EV_str']]
+        display_raw = loans[loans.term == 36][['id', 'loanAmount', 'term', 'intRate', 'intRate_str', 'grade', 'predict_str', 'EV', 'EV_str']]
+
+
+
+
+        display_raw['loanAmount'] = display_raw['loanAmount'].apply(lambda x: '$'+'{:,.2f}'.format(x))
 
         global display
         display_raw = display_raw.sort_values(by=['grade', 'EV'], ascending=[1,0])
 
-        display = display_raw[['id', 'loanAmount', 'term', 'intRate', 'grade', 'predict_str', 'EV_str']]
+        display = display_raw[['id', 'loanAmount', 'term', 'intRate_str', 'grade', 'predict_str', 'EV_str']]
 
 
         self.tableWidget.setRowCount(display.shape[0])
@@ -140,28 +157,28 @@ class Ui_Form(object):
 
 
         self.a_box = QtWidgets.QCheckBox(Form)
-        self.a_box.setGeometry(QtCore.QRect(30, 20, 87, 20))
+        self.a_box.setGeometry(QtCore.QRect(40, 20, 41, 20))
         self.a_box.setObjectName("a_box")
         self.e_box = QtWidgets.QCheckBox(Form)
-        self.e_box.setGeometry(QtCore.QRect(230, 20, 87, 20))
+        self.e_box.setGeometry(QtCore.QRect(140, 20, 31, 20))
         self.e_box.setObjectName("e_box")
         self.b_box = QtWidgets.QCheckBox(Form)
-        self.b_box.setGeometry(QtCore.QRect(30, 50, 87, 20))
+        self.b_box.setGeometry(QtCore.QRect(40, 50, 31, 20))
         self.b_box.setObjectName("b_box")
         self.d_box = QtWidgets.QCheckBox(Form)
-        self.d_box.setGeometry(QtCore.QRect(130, 50, 87, 20))
+        self.d_box.setGeometry(QtCore.QRect(90, 50, 31, 20))
         self.d_box.setObjectName("d_box")
         self.g_box = QtWidgets.QCheckBox(Form)
-        self.g_box.setGeometry(QtCore.QRect(330, 20, 87, 20))
+        self.g_box.setGeometry(QtCore.QRect(180, 20, 41, 20))
         self.g_box.setObjectName("g_box")
         self.c_box = QtWidgets.QCheckBox(Form)
-        self.c_box.setGeometry(QtCore.QRect(130, 20, 87, 20))
+        self.c_box.setGeometry(QtCore.QRect(90, 20, 31, 20))
         self.c_box.setObjectName("c_box")
         self.f_box = QtWidgets.QCheckBox(Form)
-        self.f_box.setGeometry(QtCore.QRect(230, 50, 87, 20))
+        self.f_box.setGeometry(QtCore.QRect(140, 50, 31, 20))
         self.f_box.setObjectName("f_box")
         self.all_box = QtWidgets.QCheckBox(Form)
-        self.all_box.setGeometry(QtCore.QRect(330, 50, 87, 20))
+        self.all_box.setGeometry(QtCore.QRect(180, 50, 41, 20))
         self.all_box.setObjectName("all_box")
 
         self.a_box.setCheckState(2)
@@ -183,15 +200,15 @@ class Ui_Form(object):
         self.all_box.clicked.connect(self.all_box_func)
         
         self.min_int = QtWidgets.QSlider(Form)
-        self.min_int.setGeometry(QtCore.QRect(450, 20, 251, 22))
+        self.min_int.setGeometry(QtCore.QRect(330, 20, 251, 22))
         self.min_int.setOrientation(QtCore.Qt.Horizontal)
         self.min_int.setObjectName("min_int")
-        self.min_int.setMinimum(min(display.intRate)-1)
-        self.min_int.setMaximum(max(display.intRate)+1)
+        self.min_int.setMinimum(min(display_raw.intRate)-1)
+        self.min_int.setMaximum(max(display_raw.intRate)+1)
         self.min_int.sliderMoved.connect(self.redraw)
         
         self.min_ev = QtWidgets.QSlider(Form)
-        self.min_ev.setGeometry(QtCore.QRect(450, 50, 251, 22))
+        self.min_ev.setGeometry(QtCore.QRect(710, 20, 251, 22))  #
         self.min_ev.setOrientation(QtCore.Qt.Horizontal)
         self.min_ev.setObjectName("min_ev")
         self.min_ev.setMinimum(min(display_raw.EV)-1)
@@ -199,7 +216,7 @@ class Ui_Form(object):
         self.min_ev.sliderMoved.connect(self.redraw)
         
         self.max_ev = QtWidgets.QSlider(Form)
-        self.max_ev.setGeometry(QtCore.QRect(729, 50, 251, 22))
+        self.max_ev.setGeometry(QtCore.QRect(710, 50, 251, 22))
         self.max_ev.setOrientation(QtCore.Qt.Horizontal)
         self.max_ev.setObjectName("max_ev")
         self.max_ev.setMinimum(min(display_raw.EV)-1)
@@ -208,13 +225,32 @@ class Ui_Form(object):
         self.max_ev.sliderMoved.connect(self.redraw)
         
         self.max_int = QtWidgets.QSlider(Form)
-        self.max_int.setGeometry(QtCore.QRect(729, 20, 251, 22))
+        self.max_int.setGeometry(QtCore.QRect(330, 50, 251, 22)) #(710, 20, 251, 22)
         self.max_int.setOrientation(QtCore.Qt.Horizontal)
         self.max_int.setObjectName("max_int")
-        self.max_int.setMinimum(min(display.intRate)-1)
-        self.max_int.setMaximum(max(display.intRate)+1)
-        self.max_int.setValue(max(display.intRate)+1)
+        self.max_int.setMinimum(min(display_raw.intRate)-1)
+        self.max_int.setMaximum(max(display_raw.intRate)+1)
+        self.max_int.setValue(max(display_raw.intRate)+1)
         self.max_int.sliderMoved.connect(self.redraw)
+
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(420, 10, 81, 16))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(Form)
+        self.label_2.setGeometry(QtCore.QRect(280, 20, 31, 16))
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(Form)
+        self.label_3.setGeometry(QtCore.QRect(660, 20, 31, 16))
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(Form)
+        self.label_4.setGeometry(QtCore.QRect(280, 50, 31, 16))
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(Form)
+        self.label_5.setGeometry(QtCore.QRect(660, 50, 31, 16))
+        self.label_5.setObjectName("label_5")
+        self.label_6 = QtWidgets.QLabel(Form)
+        self.label_6.setGeometry(QtCore.QRect(790, 10, 101, 20))
+        self.label_6.setObjectName("label_6")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -244,6 +280,12 @@ class Ui_Form(object):
         self.c_box.setText(_translate("Form", "C"))
         self.f_box.setText(_translate("Form", "F"))
         self.all_box.setText(_translate("Form", "All"))
+        self.label.setText(_translate("Form", "Interest Rate"))
+        self.label_2.setText(_translate("Form", "Min:"))
+        self.label_3.setText(_translate("Form", "Min:"))
+        self.label_4.setText(_translate("Form", "Max:"))
+        self.label_5.setText(_translate("Form", "Max:"))
+        self.label_6.setText(_translate("Form", "Expected Value"))
 
     def redraw(self):
 
@@ -258,8 +300,8 @@ class Ui_Form(object):
 
 
         newdf = display[[x in disp_rows for x in display.grade] & 
-                    (display['intRate'] >= self.min_int.value()) & 
-                    (display['intRate'] <= self.max_int.value()) &
+                    (display_raw['intRate'] >= self.min_int.value()) & 
+                    (display_raw['intRate'] <= self.max_int.value()) &
                     (display_raw['EV'] >= self.min_ev.value()) &
                     (display_raw['EV'] <= self.max_ev.value())
                     ]
@@ -298,6 +340,7 @@ class Ui_login(object):
         self.keybox_label = QtWidgets.QLabel(login)
         self.keybox_label.setGeometry(QtCore.QRect(30, 30, 60, 16))
         self.keybox_label.setObjectName("keybox_label")
+        self.keybox.setEchoMode(QtWidgets.QLineEdit.Password)
 
         self.retranslateUi(login)
         self.ok_button.accepted.connect(login.accept)
