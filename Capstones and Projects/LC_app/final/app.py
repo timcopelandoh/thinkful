@@ -79,7 +79,7 @@ class Ui_Form(object):
         modelinput = loans[['loanAmount', 'annualInc', 'dti', 'ficoRangeHigh', 'delinq2Yrs', 
         'earliestCrLine', 'inqLast6Mths', 'openAcc', 'pubRec', 'revolBal', 'revolUtil', 'totalAcc']]
 
-        modelinput['lnAnnualInc'] = np.log(modelinput.annualInc)
+        modelinput['lnAnnualInc'] = np.log(modelinput.annualInc+1)
         modelinput['boolDelinq2Yrs'] = modelinput['delinq2Yrs'] >= 1
 
         def convert_date(x):
@@ -88,9 +88,9 @@ class Ui_Form(object):
         modelinput['lnEarliestCrLine'] = modelinput['earliestCrLine'].apply(lambda x: np.log((datetime.date.today()-convert_date(x)).days))
 
         modelinput['boolInqLast6Mths'] = modelinput['inqLast6Mths'] >= 1
-        modelinput['lnOpenAcc'] = np.log(modelinput['openAcc'])
+        modelinput['lnOpenAcc'] = np.log(modelinput['openAcc']+1)
         modelinput['boolPubRec'] = modelinput['pubRec'] >= 1
-        modelinput['lnRevolBal'] = np.log(modelinput['revolBal'])
+        modelinput['lnRevolBal'] = np.log(modelinput['revolBal']+1)
 
         modelinput = modelinput[['loanAmount', 'lnAnnualInc', 'dti', 'ficoRangeHigh', 'boolDelinq2Yrs', 'delinq2Yrs', 
         'lnEarliestCrLine', 'boolInqLast6Mths', 'inqLast6Mths', 'lnOpenAcc', 'boolPubRec', 'pubRec', 'lnRevolBal', 'revolUtil', 'totalAcc']]
@@ -106,6 +106,9 @@ class Ui_Form(object):
         modelinput['G'] = loans['grade'] == 'G'
 
         rf = pickle.load(open('rf.sav', 'rb'))
+
+        pd.set_option('display.max_rows', None)
+        print(modelinput)
 
         loans['predict'] = [x[1] for x in rf.predict_proba(modelinput)]
         loans['predict_str'] = loans.apply(lambda x: str(round(x['predict']*100,1))+'%', axis=1)

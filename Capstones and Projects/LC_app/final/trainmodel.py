@@ -51,14 +51,14 @@ loan = loan[(loan.loan_status == 'Fully Paid') | (loan.loan_status == 'Charged O
 # restrict loan to income under $1,000,000
 loan = loan[loan.annual_inc < 1000000]
 
-loan['ln_annual_inc'] = np.log(loan.annual_inc)
+loan['ln_annual_inc'] = np.log(loan.annual_inc+1)
 
 loan = loan[loan.revol_util < 150]
 loan['ln_revol_bal'] = np.log(loan.revol_bal+1)
 
 loan['ln_earliest_cr_line'] = np.log(loan.earliest_cr_line)
 
-loan['ln_open_acc'] = np.log(loan.open_acc)
+loan['ln_open_acc'] = np.log(loan.open_acc+1)
 
 loan.rename(columns = {'delinq_2yrs': 'num_delinq_2yrs'}, inplace=True)
 loan['delinq_2yrs'] = (loan['num_delinq_2yrs'] >= 1)
