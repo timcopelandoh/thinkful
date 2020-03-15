@@ -17,37 +17,6 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-
-'''
-live = pd.read_csv('live.csv')
-
-# create DF for data that needs to be fed into the model
-live_input = live[['loan_amnt', 'ln_annual_inc', 'dti', 'fico_range_high', 'delinq_2yrs', 'num_delinq_2yrs', 'ln_earliest_cr_line', 'inq_last_6mths', 'num_inq_last_6mths', 'ln_open_acc', 'pub_rec', 'num_pub_rec', 'ln_revol_bal', 'revol_util', 'total_acc']]
-
-# load trained model
-logit = sm.load('fitted_logit.pickle')
-
-# create column for predicted values and the same value 
-# in a readable string format
-live['predict'] = logit.predict(live_input.astype(float))
-live['predict_str'] = live.apply(lambda x: str(round(x['predict']*100,1))+'%', axis=1)
-
-def total_int_paid(n, i):
-    ii = i/12
-    return n*(ii * (1 + ii) ** n) / ((1+ii)**n - 1)-1
-
-live['total_int_paid'] = live.apply(lambda x: total_int_paid(36, x['int_rate']/100), axis=1)
-
-live['EV'] = (live['predict'] * live['total_int_paid'] - .37 * (1 - live['predict'])) * 100
-live['EV_str'] = live['EV'].apply(lambda x: str(round(x, 1)) + '%')
-
-# create DF of data we want to display
-disp = live[['id', 'loan_amnt', 'term', 'int_rate', 'grade', 'predict_str', 'EV_str']]
-
-# sort display dataframe and print to console
-disp = disp.sort_values(by = ['grade', 'EV_str'], ascending = [1,0])
-'''
-
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -211,7 +180,7 @@ class Ui_Form(object):
         self.min_int.sliderMoved.connect(self.redraw)
         
         self.min_ev = QtWidgets.QSlider(Form)
-        self.min_ev.setGeometry(QtCore.QRect(710, 20, 251, 22))  #
+        self.min_ev.setGeometry(QtCore.QRect(710, 20, 251, 22))
         self.min_ev.setOrientation(QtCore.Qt.Horizontal)
         self.min_ev.setObjectName("min_ev")
         self.min_ev.setMinimum(min(display_raw.EV)-1)
@@ -228,7 +197,7 @@ class Ui_Form(object):
         self.max_ev.sliderMoved.connect(self.redraw)
         
         self.max_int = QtWidgets.QSlider(Form)
-        self.max_int.setGeometry(QtCore.QRect(330, 50, 251, 22)) #(710, 20, 251, 22)
+        self.max_int.setGeometry(QtCore.QRect(330, 50, 251, 22))
         self.max_int.setOrientation(QtCore.Qt.Horizontal)
         self.max_int.setObjectName("max_int")
         self.max_int.setMinimum(min(display_raw.intRate)-1)
@@ -365,11 +334,7 @@ class Ui_login(object):
         Form.exec_()
 
 
-    
-#Form = QtWidgets.QWidget()
-#uimain = Ui_Form()
-#uimain.setupUi(Form)
-#Form.show()
+
 
 def clicked():
     apikey = ui.keybox.text()
@@ -385,7 +350,6 @@ if __name__ == "__main__":
     login.show()
 
     sys.exit(app.exec_())
-    #app.exec_()
 
     
     
