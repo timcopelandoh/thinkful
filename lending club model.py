@@ -14,8 +14,6 @@ lc = pd.read_csv('lendingclub.csv', header=1, low_memory=False)
 	#print('Column {}: \t{}'.format(i, lc.columns[i]))
 
 
-
-
 lc['own_home'] = pd.get_dummies((lc['home_ownership'] == 'OWN'), drop_first=True)
 
 lc_reg = lc[['fico_range_low', 'dti', 'annual_inc', 'own_home', 'mths_since_last_delinq', 'open_acc', 'delinq_2yrs', 'revol_bal', 'total_acc']].dropna()
